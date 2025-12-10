@@ -19,5 +19,3 @@ const UserShema = new Schema(
 );
 export const User = model('User', UserShema);
 export default User;
-
-

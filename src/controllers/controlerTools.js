@@ -1,4 +1,3 @@
-import { celebrate, Joi } from 'celebrate';
 import { Tool } from '../models/tool.js';
 
 export const getAllNotes = async (req, res, next) => {
@@ -14,18 +13,7 @@ export const getAllNotes = async (req, res, next) => {
   }
 };
 
-export const createTool = celebrate({
-  body: Joi.object().keys({
-    owner: Joi.string().required(),
-    category: Joi.string().required(),
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    pricePerDay: Joi.number().positive().required(),
-    images: Joi.string().required(),
-    specifications: Joi.object().optional(),
-    rentalTerms: Joi.string().optional(),
-  }),
-})(async (req, res, next) => {
+export const createTool = async (req, res, next) => {
   try {
     const {
       owner,
@@ -55,6 +43,6 @@ export const createTool = celebrate({
   } catch (error) {
     next(error);
   }
-});
+};
 
 export default getAllNotes;

@@ -1,17 +1,15 @@
-import { Router } from "express";
-import { celebrate } from "celebrate";
+import { Router } from 'express';
 import {
-    loginUser,
-    registerUser,
-    logoutUser,
-    refreshUserSession
- } from "../controllers/authController.js";
-
+  loginUser,
+  registerUser,
+  logoutUser,
+  refreshUserSession,
+} from '../controllers/authController.js';
 
 const router = Router();
 
-router.post('/auth/register', celebrate(), registerUser);
-router.post('/auth/login', celebrate(), loginUser);
+router.post('/auth/register', registerUser);
+router.post('/auth/login', loginUser);
 router.post('/auth/logout', logoutUser);
 router.post('/auth/refresh', refreshUserSession);
 

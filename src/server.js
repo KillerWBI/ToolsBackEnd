@@ -10,7 +10,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 
 import ToolsRout from './routes/ToolsRout.js';
-import UsersRout from './routes/UsersRout.js';
+import UsersRout from './routes/usersRout.js';
 import bookingsRouter from './routes/bookingsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 

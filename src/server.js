@@ -1,13 +1,13 @@
-import { errors } from "celebrate";
-import cors from "cors";
-import "dotenv/config";
-import express from "express";
-import cookieParser from "cookie-parser";
+import { errors } from 'celebrate';
+import cors from 'cors';
+import 'dotenv/config';
+import express from 'express';
+import cookieParser from 'cookie-parser';
 
-import { connectMongoDB } from "./db/connectMongoDB.js";
-import { errorHandler } from "./middleware/errorHandler.js";
-import { logger } from "./middleware/logger.js";
-import { notFoundHandler } from "./middleware/notFoundHandler.js";
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
 
 import toolsRoutes from "./routes/toolsRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";

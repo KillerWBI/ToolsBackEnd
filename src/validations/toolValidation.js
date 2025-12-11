@@ -22,3 +22,9 @@ export const createToolSchema = {
     rentalTerms: Joi.string().optional(),
   }),
 };
+
+export const toolIdSchema = {
+  [Segments.PARAMS]: Joi.object({
+    toolId: Joi.string().custom(objectIdValidator).required(),
+  }),
+};

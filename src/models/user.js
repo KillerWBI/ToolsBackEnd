@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const userSchema = new Schema(
   {
@@ -27,7 +27,7 @@ const userSchema = new Schema(
     avatarUrl: {
       type: String,
       trim: true,
-      default: "",
+      default: '',
     },
   },
   {
@@ -36,7 +36,7 @@ const userSchema = new Schema(
 );
 
 // ===== Hooks =====
-userSchema.pre("save", function (next) {
+userSchema.pre('save', function (next) {
   if (!this.username) {
     this.username = this.email;
   }

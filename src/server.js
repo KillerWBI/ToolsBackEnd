@@ -15,11 +15,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use(logger);
 
 // ===== Routes =====
 
-app.use('/tools', ToolsRout);
+app.use(ToolsRout);
 
 // ===== Handlers =====
 app.use(notFoundHandler);

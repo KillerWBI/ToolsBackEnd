@@ -1,23 +1,54 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
-
-
-const UserShema = new Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
       trim: true,
+      minlength: 2,
+      maxlength: 32,
     },
-    avatarUrl: {
+
+    email: {
       type: String,
+      unique: true,
       required: true,
       trim: true,
-    }
+    },
+
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+      maxlength: 128,
+    },
+
+    avatarUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
-export const User = model('User', UserShema);
+
+// ===== Hooks =====
+userSchema.pre("save", function (next) {
+  if (!this.username) {
+    this.username = this.email;
+  }
+  next();
+});
+
+// ===== Hide password from responses =====
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
+export const User = model("User", userSchema);
 export default User;
-
-

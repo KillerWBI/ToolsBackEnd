@@ -58,7 +58,21 @@ export const getToolById = async (req, res, next) => {
   if (!tool) {
     next(createHttpError(404, 'Tool not found'));
     return;
-  };
+  }
+
+  res.status(200).json(tool);
+};
+
+export const updateTool = async (req, res) => {
+  const { toolId } = req.params;
+
+  const tool = await Tool.findOneAndUpdate({ _id: toolId }, req.body, {
+    new: true,
+  });
+
+  if (!tool) {
+    throw createHttpError(404, 'Tool not found');
+  }
 
   res.status(200).json(tool);
 };

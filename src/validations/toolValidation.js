@@ -28,3 +28,26 @@ export const toolIdSchema = {
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
 };
+
+export const updateToolSchema = {
+  [Segments.PARAMS]: Joi.object({
+    toolId: Joi.string().custom(objectIdValidator).required(),
+  }),
+  [Segments.BODY]: Joi.object({
+    owner: Joi.objectId(),
+    category: Joi.objectId(),
+    name: Joi.string().min(3).max(200),
+    description: Joi.string().min(10),
+    pricePerDay: Joi.number().min(1),
+    images: Joi.string().uri(),
+    rating: Joi.number().min(0).max(5),
+    specifications: Joi.array().items(Joi.string()),
+    rentalTerms: Joi.string(),
+    bookedDates: Joi.array().items(Joi.date()),
+    feedbacks: Joi.array().items(
+      Joi.object({
+        _id: Joi.objectId(),
+      })
+    ),
+  }).min(1),
+};

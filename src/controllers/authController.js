@@ -6,7 +6,7 @@ import { Session } from "../models/session.js";
 
 //registration
 export const registerUser = async (req, res, next) => {
-    const { email, password } = req.body;
+    const {email, password } = req.body;
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         return next(createHttpError(400, 'Email in use'));

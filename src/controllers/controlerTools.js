@@ -1,6 +1,4 @@
-import { Tool } from "../models/tool.js";
-
-
+import { Tool } from '../models/tool.js';
 
 export const getAllNotes = async (req, res, next) => {
   try {
@@ -8,10 +6,43 @@ export const getAllNotes = async (req, res, next) => {
     const tools = await Tool.find().lean();
 
     res.status(200).json({
-      tools
+      tools,
     });
   } catch (error) {
     next(error);
   }
 };
+
+export const createTool = async (req, res, next) => {
+  try {
+    const {
+      owner,
+      category,
+      name,
+      description,
+      pricePerDay,
+      images,
+      specifications,
+      rentalTerms,
+    } = req.body;
+
+    const newTool = await Tool.create({
+      owner,
+      category,
+      name,
+      description,
+      pricePerDay,
+      images,
+      specifications: specifications || {},
+      rentalTerms: rentalTerms || '',
+    });
+
+    res.status(201).json({
+      tool: newTool,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default getAllNotes;

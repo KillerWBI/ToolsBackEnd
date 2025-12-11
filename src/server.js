@@ -9,8 +9,8 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { logger } from "./middleware/logger.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 
-import ToolsRout from "./routes/ToolsRout.js";
-import UsersRout from "./routes/UsersRout.js";
+import toolsRoutes from "./routes/toolsRoutes.js";
+import usersRoutes from "./routes/usersRoutes.js";
 import bookingsRouter from "./routes/bookingsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
@@ -24,9 +24,9 @@ app.use(cookieParser());
 app.use(logger);
 
 // ===== Routes =====
-app.use(authRoutes); // авторизация и регистрация
-app.use(ToolsRout);  // инструменты
-app.use(UsersRout);  // пользователи
+app.use("/api/authRoutes", authRoutes); // авторизация и регистрация
+app.use("/api/toolsRoutes", toolsRoutes);  // инструменты
+app.use("/api/usersRout", usersRoutes);  // пользователи
 app.use("/api/bookings", bookingsRouter); // бронирование
 
 // ===== Handlers =====

@@ -75,6 +75,6 @@ const toolSchema = new Schema(
   { timestamps: true }
 );
 export const Tool = model('Tool', toolSchema);
-export default Tool;
+
 
 

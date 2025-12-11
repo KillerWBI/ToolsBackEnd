@@ -23,6 +23,6 @@ const CategoryShrma = new Schema(
   { timestamps: true }
 );
 export const Category = model('Category', CategoryShrma);
-export default Category;
+
 
 

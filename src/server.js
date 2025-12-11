@@ -9,10 +9,10 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 
-import toolsRoutes from "./routes/toolsRoutes.js";
-import usersRoutes from "./routes/usersRoutes.js";
-import bookingsRouter from "./routes/bookingsRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
+import toolsRoutes from './routes/toolsRoutes.js';
+import usersRoutes from './routes/usersRoutes.js';
+import bookingsRouter from './routes/bookingsRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,10 +24,13 @@ app.use(cookieParser());
 app.use(logger);
 
 // ===== Routes =====
-app.use("/api/authRoutes", authRoutes); // авторизация и регистрация
-app.use("/api/toolsRoutes", toolsRoutes);  // инструменты
-app.use("/api/usersRout", usersRoutes);  // пользователи
-app.use("/api/bookings", bookingsRouter); // бронирование
+app.use('/api/auth', authRoutes); // авторизация и регистрация
+app.use('/api/tools', toolsRoutes); // инструменты
+app.use('/api/users', usersRoutes); // пользователи
+app.use('/api/bookings', bookingsRouter); // бронирование
+// Как будут готовы, раскомментируй эти роуты
+// app.use('/api/categories', categoriesRouter); // категории
+// app.use('/api/feedbacks', feedbacksRouter); // отзывы
 
 // ===== Handlers =====
 app.use(notFoundHandler);

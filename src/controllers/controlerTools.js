@@ -1,4 +1,5 @@
 import { Tool } from '../models/tool.js';
+import createHttpError from 'http-errors';
 
 export const getAllNotes = async (req, res, next) => {
   try {
@@ -46,3 +47,18 @@ export const createTool = async (req, res, next) => {
 };
 
 export default getAllNotes;
+
+export const getToolById = async (req, res, next) => {
+  const { toolId } = req.params;
+  const tool = await Tool.findOne({
+    _id: toolId,
+    userId: req.user._id,
+  });
+
+  if (!tool) {
+    next(createHttpError(404, 'Tool not found'));
+    return;
+  };
+
+  res.status(200).json(tool);
+};

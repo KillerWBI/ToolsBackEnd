@@ -28,3 +28,23 @@ export const toolIdSchema = {
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
 };
+export const UpdateTollSchema = {
+  [Segments.BODY]: Joi.object({
+    category: Joi.string().custom(objectIdValidator),
+    name: Joi.string(),
+    description: Joi.string(),
+    pricePerDay: Joi.number().positive(),
+    images: Joi.string(),
+    specifications: Joi.object(),
+    rentalTerms: Joi.string(),
+  }),
+  [Segments.PARAMS]: Joi.object({
+    toolId: Joi.string().custom(objectIdValidator).required(),
+  }),
+};
+
+export const  DeleteToolShema = {
+[Segments.PARAMS]: Joi.object({
+    toolId: Joi.string().custom(objectIdValidator).required(),
+  }),
+};

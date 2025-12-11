@@ -23,6 +23,6 @@ const FeedbackShema = new Schema(
   { timestamps: true }
 );
 export const Feedbacks = model('feedbacks', FeedbackShema);
-export default Feedbacks;
+
 
 

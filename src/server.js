@@ -7,6 +7,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { logger } from "./middleware/logger.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import ToolsRout from "./routes/ToolsRout.js";
+import UsersRout from "./routes/UsersRout.js";
 
 
 
@@ -23,6 +24,7 @@ app.use(logger);
 // ===== Routes =====
 
 app.use(ToolsRout);
+app.use(UsersRout);
 
 
 // ===== Handlers =====

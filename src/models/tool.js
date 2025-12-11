@@ -74,6 +74,13 @@ const toolSchema = new Schema(
   },
   { timestamps: true }
 );
+
+toolSchema.index({
+  category: 'text',
+  name: 'text',
+  description: 'text',
+});
+
 export const Tool = model('Tool', toolSchema);
 export default Tool;
 

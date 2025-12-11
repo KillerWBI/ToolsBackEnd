@@ -26,7 +26,7 @@ app.use(logger);
 // ===== Routes =====
 app.use(authRoutes); // авторизация и регистрация
 app.use(ToolsRout); // инструменты
-app.use(UsersRout); // пользователи
+app.use('/api/users', UsersRout); // пользователи
 app.use('/api/bookings', bookingsRouter); // бронирование
 
 // ===== Handlers =====

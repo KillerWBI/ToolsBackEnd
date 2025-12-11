@@ -4,7 +4,6 @@ import { celebrate } from 'celebrate';
 import { getAllNotes, createTool } from '../controllers/controlerTools.js';
 import { createToolSchema } from '../validations/toolValidation.js';
 import { authenticate } from '../middleware/authenticate.js';
-import getUserTools from '../controllers/userToolsController.js';
 
 const router = Router();
 
@@ -13,6 +12,5 @@ router.use('/Tool', authenticate);
 
 router.get('/Tool', getAllNotes);
 router.post('/Tool', celebrate(createToolSchema), createTool);
-router.get('/user/:userId', getUserTools);
 
 export default router;

@@ -7,6 +7,8 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { logger } from "./middleware/logger.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import ToolsRout from "./routes/ToolsRout.js";
+import authRoutes from "./routes/authRoutes.js";
+import cookieParser from "cookie-parser";
 
 
 
@@ -19,10 +21,13 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(logger);
+app.use(cookieParser());
 
 // ===== Routes =====
 
+app.use(authRoutes);
 app.use(ToolsRout);
+
 
 
 // ===== Handlers =====

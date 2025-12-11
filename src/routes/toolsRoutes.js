@@ -1,9 +1,9 @@
-import { Router } from 'express';
 import { celebrate } from 'celebrate';
+import { Router } from 'express';
 
-import { getAllNotes, createTool } from '../controllers/controlerTools.js';
-import { createToolSchema } from '../validations/toolValidation.js';
+import { createTool, DeleteTool, getAllNotes, updateTool } from '../controllers/controlerTools.js';
 import { authenticate } from '../middleware/authenticate.js';
+import { createToolSchema, DeleteToolShema, UpdateTollSchema } from '../validations/toolValidation.js';
 
 const router = Router();
 
@@ -12,5 +12,6 @@ router.use("/Tool", authenticate);
 
 router.get("/Tool", getAllNotes);
 router.post("/Tool", celebrate(createToolSchema), createTool);
-
+router.patch("Tool/:id", celebrate(UpdateTollSchema), updateTool);
+router.delete("Tool/:id", celebrate(DeleteToolShema), DeleteTool);
 export default router;

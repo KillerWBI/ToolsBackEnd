@@ -13,7 +13,6 @@ import ToolsRout from './routes/ToolsRout.js';
 import UsersRout from './routes/UsersRout.js';
 import bookingsRouter from './routes/bookingsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import categoriesRouter from './routes/categoriesRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +28,6 @@ app.use(authRoutes); // авторизация и регистрация
 app.use(ToolsRout); // инструменты
 app.use(UsersRout); // пользователи
 app.use('/api/bookings', bookingsRouter); // бронирование
-app.use('/api/categories', categoriesRouter); // категорії
 
 // ===== Handlers =====
 app.use(notFoundHandler);

@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import { getPublicUserById } from '../controllers/usersController.js';
-import getUserTools from '../controllers/userToolsController.js';
+import { getPublicUserById, getUser } from '../controllers/usersController.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
-// Публичный пользователь
-router.get('/:userId', getPublicUserById);
+router.get('/api/users/:userId', getPublicUserById);
 
-// Инструменты пользователя
-router.get('/:userId/tools', getUserTools);
+router.get('/api/users/me', authenticate, getUser);
 
 export default router;

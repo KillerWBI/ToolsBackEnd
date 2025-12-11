@@ -4,8 +4,8 @@ import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
 
-router.get('/api/users/:userId', getPublicUserById);
+router.get('/:userId', getPublicUserById);
 
-router.get('/api/users/me', authenticate, getUser);
+router.get('/me', authenticate, getUser);
 
 export default router;

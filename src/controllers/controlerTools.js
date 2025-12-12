@@ -1,18 +1,46 @@
 import createHttpError from 'http-errors';
 import { Tool } from '../models/tool.js';
 
-export const getAllNotes = async (req, res, next) => {
-  try {
-    // выполнить запрос и получить массив документов
-    const tools = await Tool.find().lean();
+export const getAllTools = async (req, res) => {
+  const { search, category } = req.query;
+  
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 16;
+  const filter = {};
 
-    res.status(200).json({
-      tools,
-    });
-  } catch (error) {
-    next(error);
+  const skip = (page - 1) * limit;
+
+  
+
+
+  if(search) {
+    toolsQuery.where({ $text: { $search: search } });
   }
+
+  if (category) {
+    const categoryIds = category.split(',');
+    filter.category = { $in: categoryIds };
+  }
+
+  const toolsQuery = Tool.find(filter);
+
+  const [totalTools, tools] = await Promise.all([
+    toolsQuery.clone().countDocuments(),
+    toolsQuery.skip(skip).limit(limit),
+  ]);
+
+const totalPages = Math.ceil(totalTools / limit);
+
+  res.status(200).json({
+    page,
+    totalPages,
+    limit,
+    totalTools,
+    tools: [...tools],
+  });
+
 };
+
 
 export const createTool = async (req, res, next) => {
   try {
@@ -46,7 +74,7 @@ export const createTool = async (req, res, next) => {
   }
 };
 
-export default getAllNotes;
+
 
 export const getToolById = async (req, res, next) => {
   const { toolId } = req.params;
@@ -102,3 +130,6 @@ export const DeleteTool = async (req, res, next) => {
     next(err);
   }
 };
+
+
+

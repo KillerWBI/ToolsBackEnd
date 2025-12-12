@@ -92,7 +92,7 @@ export const updateTool = async (req, res, next) => {
 
 export const DeleteTool = async (req,res,next) => {
     try {
-        const {toolId} = req.params;
+        const { toolId } = req.params;
         const userId = req.user._id;
 
         const tool = await Tool.findById(toolId);

@@ -43,8 +43,8 @@ export const UpdateTollSchema = {
   }),
 };
 
-export const  DeleteToolShema = {
-[Segments.PARAMS]: Joi.object({
+export const DeleteToolShema = {
+  [Segments.PARAMS]: Joi.object({
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
 };

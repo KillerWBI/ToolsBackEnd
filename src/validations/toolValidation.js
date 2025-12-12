@@ -1,12 +1,29 @@
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
 
-// Custom validator for MongoDB ObjectId
+
 const objectIdValidator = (value, helpers) => {
   if (!isValidObjectId(value)) {
     return helpers.error('any.invalid', { message: 'Invalid ID format' });
   }
   return value;
+};
+
+export const getAllToolsSchema = {
+    [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    limit: Joi.number().integer().min(1).max(20).default(16),
+    search: Joi.string().trim().allow(''),
+    category: Joi.string()
+      .pattern(/^[a-f\d,]+$/i)
+      .optional(),
+    })
+};
+
+export const toolIdSchema = {
+    [Segments.PARAMS]: Joi.object({
+    toolId: Joi.string().custom(objectIdValidator).required(),
+    })
 };
 
 // Schema for creating a tool (POST /Tool)
@@ -23,24 +40,27 @@ export const createToolSchema = {
   }),
 };
 
-export const toolIdSchema = {
+
+export const updateToolSchema = {
   [Segments.PARAMS]: Joi.object({
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
-};
-export const UpdateTollSchema = {
   [Segments.BODY]: Joi.object({
     category: Joi.string().custom(objectIdValidator),
-    name: Joi.string(),
-    description: Joi.string(),
-    pricePerDay: Joi.number().positive(),
-    images: Joi.string(),
-    specifications: Joi.object(),
+    name: Joi.string().min(3).max(200),
+    description: Joi.string().min(10),
+    pricePerDay: Joi.number().min(1),
+    images: Joi.string().uri(),
+    rating: Joi.number().min(0).max(5),
+    specifications: Joi.array().items(Joi.string()),
     rentalTerms: Joi.string(),
-  }),
-  [Segments.PARAMS]: Joi.object({
-    toolId: Joi.string().custom(objectIdValidator).required(),
-  }),
+    bookedDates: Joi.array().items(Joi.date()),
+    feedbacks: Joi.array().items(
+      Joi.object({
+        _id: Joi.string().custom(objectIdValidator),
+      })
+    ),
+  }).min(1),
 };
 
 export const DeleteToolShema = {
@@ -48,3 +68,6 @@ export const DeleteToolShema = {
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
 };
+
+
+

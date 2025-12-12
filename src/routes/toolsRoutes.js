@@ -12,6 +12,6 @@ router.use("/Tool", authenticate);
 
 router.get("/Tool", getAllNotes);
 router.post("/Tool", celebrate(createToolSchema), createTool);
-router.patch("Tool/:id", celebrate(UpdateTollSchema), updateTool);
-router.delete("/Tool/:id", celebrate(DeleteToolShema), DeleteTool);
+router.patch("Tool/:toolId", celebrate(UpdateTollSchema), updateTool);
+router.delete("/Tool/:toolId", celebrate(DeleteToolShema), DeleteTool);
 export default router;

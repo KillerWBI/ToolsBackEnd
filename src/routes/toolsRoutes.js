@@ -8,13 +8,13 @@ import { createToolSchema, DeleteToolShema, UpdateTollSchema } from '../validati
 const router = Router();
 
 // ===== PUBLIC ROUTE =====
-router.get("/Tool", getAllNotes);
+router.get("/tool", getAllNotes);
 
 // ===== PROTECTED ROUTES =====
-router.use("/Tool", authenticate);
+router.use("/tool", authenticate);
 
-router.post("/Tool", celebrate(createToolSchema), createTool);
-router.patch("/Tool/:toolId", celebrate(UpdateTollSchema), updateTool);
-router.delete("/Tool/:toolId", celebrate(DeleteToolShema), DeleteTool);
+router.post("/tool", celebrate(createToolSchema), createTool);
+router.patch("/tool/:toolId", celebrate(UpdateTollSchema), updateTool);
+router.delete("/tool/:toolId", celebrate(DeleteToolShema), DeleteTool);
 
 export default router;

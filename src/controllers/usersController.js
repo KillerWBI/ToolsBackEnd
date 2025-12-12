@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
-import User from '../models/user.js';
+import { User } from '../models/user.js';
 
 const { isValidObjectId } = mongoose;
 

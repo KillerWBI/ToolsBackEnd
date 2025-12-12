@@ -1,6 +1,5 @@
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
-// import Category from '../models/category.js';
 
 
 const objectIdValidator = (value, helpers) => {
@@ -13,8 +12,11 @@ const objectIdValidator = (value, helpers) => {
 export const getAllToolsSchema = {
     [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1).default(1),
-    perPage: Joi.number().integer().min(4).max(16).default(16),
+    limit: Joi.number().integer().min(1).max(20).default(16),
     search: Joi.string().trim().allow(''),
+    category: Joi.string()
+      .pattern(/^[a-f\d,]+$/i)
+      .optional(),
     })
 };
 

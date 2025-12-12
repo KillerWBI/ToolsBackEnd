@@ -29,42 +29,27 @@ export const registerUser = async (req, res, next) => {
 
 //login
 export const loginUser = async (req, res, next) => {
-    try {
-        const { name, email, password } = req.body;
+        const { email, password } = req.body;
 
-        // Знаходимо користувача за email
         const user = await User.findOne({ email });
         if (!user) {
             return next(createHttpError(401, 'Invalid credentials'));
         }
 
-        // Перевіряємо, чи збігається name
-        if (user.name !== name) {
-            return next(createHttpError(401, 'Invalid credentials'));
-        }
-
-        // Перевірка пароля
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
             return next(createHttpError(401, 'Invalid credentials'));
         }
-
-        // Видаляємо старі сесії
         await Session.deleteOne({ userId: user._id });
 
-        // Створюємо нову сесію
         const newSession = await createSession(user._id);
         setSessionCookies(res, newSession);
 
-        // Відправляємо користувача
         res.status(200).json({
             name: user.name,
             email: user.email,
             _id: user._id,
         });
-    } catch (err) {
-        next(err);
-    }
 };
 
 //logout

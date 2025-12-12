@@ -4,7 +4,7 @@ import { Router } from 'express';
 import {
   createTool,
   DeleteTool,
-  getAllNotes,
+  getAllTools,
   updateTool,
 } from '../controllers/controlerTools.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -17,13 +17,13 @@ import {
 const router = Router();
 
 // ===== PUBLIC ROUTE =====
-router.get("/tool", getAllNotes);
+router.get("/", getAllTools);
 
 // ===== PROTECTED ROUTES =====
-router.use("/tool", authenticate);
+router.use("/", authenticate);
 
-router.post("/tool", celebrate(createToolSchema), createTool);
-router.patch("/tool/:toolId", celebrate(updateToolSchema), updateTool);
-router.delete("/tool/:toolId", celebrate(DeleteToolShema), DeleteTool);
+router.post("/", celebrate(createToolSchema), createTool);
+router.patch("/:toolId", celebrate(updateToolSchema), updateTool);
+router.delete("/:toolId", celebrate(DeleteToolShema), DeleteTool);
 
 export default router;

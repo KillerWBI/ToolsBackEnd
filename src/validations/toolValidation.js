@@ -41,19 +41,26 @@ export const createToolSchema = {
 };
 
 
-export const UpdateTollSchema = {
-  [Segments.BODY]: Joi.object({
-    category: Joi.string().custom(objectIdValidator),
-    name: Joi.string(),
-    description: Joi.string(),
-    pricePerDay: Joi.number().positive(),
-    images: Joi.string(),
-    specifications: Joi.object(),
-    rentalTerms: Joi.string(),
-  }),
+export const updateToolSchema = {
   [Segments.PARAMS]: Joi.object({
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
+  [Segments.BODY]: Joi.object({
+    category: Joi.string().custom(objectIdValidator),
+    name: Joi.string().min(3).max(200),
+    description: Joi.string().min(10),
+    pricePerDay: Joi.number().min(1),
+    images: Joi.string().uri(),
+    rating: Joi.number().min(0).max(5),
+    specifications: Joi.array().items(Joi.string()),
+    rentalTerms: Joi.string(),
+    bookedDates: Joi.array().items(Joi.date()),
+    feedbacks: Joi.array().items(
+      Joi.object({
+        _id: Joi.string().custom(objectIdValidator),
+      })
+    ),
+  }).min(1),
 };
 
 export const DeleteToolShema = {

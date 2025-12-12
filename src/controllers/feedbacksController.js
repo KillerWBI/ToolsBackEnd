@@ -1,4 +1,4 @@
-import { Feedbacks } from '../models/tool.js';
+import { Feedbacks } from '../models/feedback.js';
 
 // GET /feedbacks (список з пагінацією)
 export const getLatestFeedbacks = async (req, res, next) => {

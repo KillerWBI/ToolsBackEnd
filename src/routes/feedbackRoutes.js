@@ -1,5 +1,5 @@
 import express from "express";
-import { getLatestFeedbacks } from "../controllers/feedback.controller.js";
+import { getLatestFeedbacks } from "../controllers/feedbacksController.js";
 
 const router = express.Router();
 

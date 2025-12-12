@@ -34,7 +34,6 @@ export const updateToolSchema = {
     toolId: Joi.string().custom(objectIdValidator).required(),
   }),
   [Segments.BODY]: Joi.object({
-    owner: Joi.string().custom(objectIdValidator),
     category: Joi.string().custom(objectIdValidator),
     name: Joi.string().min(3).max(200),
     description: Joi.string().min(10),

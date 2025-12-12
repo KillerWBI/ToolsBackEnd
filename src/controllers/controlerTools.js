@@ -82,6 +82,7 @@ export const DeleteTool = async (req, res, next) => {
     const { toolId } = req.params;
     const userId = req.user._id;
 
+
     const tool = await Tool.findById(toolId);
     if (!tool) {
       next(createHttpError(404, 'Tool not found'));

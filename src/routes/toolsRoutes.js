@@ -16,12 +16,14 @@ import {
 
 const router = Router();
 
-// защита всех маршрутов /Tool
-router.use('/Tool', authenticate);
+// ===== PUBLIC ROUTE =====
+router.get("/Tool", getAllNotes);
 
-router.get('/Tool', getAllNotes);
-router.post('/Tool', celebrate(createToolSchema), createTool);
-router.patch('/tools/:toolId', celebrate(updateToolSchema), updateTool);
-router.delete('Tool/:id', celebrate(DeleteToolShema), DeleteTool);
+// ===== PROTECTED ROUTES =====
+router.use("/Tool", authenticate);
+
+router.post("/Tool", celebrate(createToolSchema), createTool);
+router.patch("/Tool/:toolId", celebrate(updateToolSchema), updateTool);
+router.delete("/Tool/:toolId", celebrate(DeleteToolShema), DeleteTool);
 
 export default router;

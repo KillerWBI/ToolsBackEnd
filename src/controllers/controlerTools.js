@@ -58,57 +58,47 @@ export const getToolById = async (req, res, next) => {
   if (!tool) {
     next(createHttpError(404, 'Tool not found'));
     return;
-  };
+  }
 
   res.status(200).json(tool);
 };
 
-export const updateTool = async (req, res, next) => {
-      try {
-        const {toolId} = req.params;
-        const userid = req.user._id;
+export const updateTool = async (req, res) => {
+  const { toolId } = req.params;
 
-        const tool = await Tool.findById(toolId);
+  const tool = await Tool.findOneAndUpdate({ _id: toolId }, req.body, {
+    new: true,
+  });
 
-        if(!tool){
-          next(createHttpError(404, 'Tool not found'));
-        return;
-        }
+  if (!tool) {
+    throw createHttpError(404, 'Tool not found');
+  }
 
-        if(tool.owner.toString() !== userid.toString()){
-          next(createHttpError(403, 'You are not the owner of this tool'));
-          return;
-        }
-
-        Object.assign(tool, req.body);
-        const UpdateTool = await tool.save();
-
-
-        res.status(200).json(UpdateTool);
-      } catch (err) {
-          next(err);
-      }
+  res.status(200).json(tool);
 };
 
-export const DeleteTool = async (req,res,next) => {
-    try {
-        const { toolId } = req.params;
-        const userId = req.user._id;
+export const DeleteTool = async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+    const userId = req.user._id;
 
-        const tool = await Tool.findById(toolId);
-        if(!tool) {
-          next(createHttpError(404, 'Tool not found'));
-        return;
-        }
 
-        if(tool.owner.toString() !== userId.toString()){
-          next(createHttpError(403, 'You are not the owner of this tool'));
-        return;
-        }
+    const tool = await Tool.findById(toolId);
+    if (!tool) {
+      next(createHttpError(404, 'Tool not found'));
+      return;
+    }
 
-        await Tool.findOneAndDelete({ _id: toolId });
-        res.status(200).json({message: 'Tool deleted successfully',deleted: tool});
-      } catch (err) {
-        next(err);
-      }
+    if (tool.owner.toString() !== userId.toString()) {
+      next(createHttpError(403, 'You are not the owner of this tool'));
+      return;
+    }
+
+    await Tool.findOneAndDelete({ _id: toolId });
+    res
+      .status(200)
+      .json({ message: 'Tool deleted successfully', deleted: tool });
+  } catch (err) {
+    next(err);
+  }
 };

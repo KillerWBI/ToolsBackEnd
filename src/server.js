@@ -13,6 +13,7 @@ import toolsRoutes from './routes/toolsRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
 import bookingsRouter from './routes/bookingsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import feedbackRouter from "./routes/feedbackRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,7 +31,7 @@ app.use('/api/users', usersRoutes); // пользователи
 app.use('/api/bookings', bookingsRouter); // бронирование
 // Как будут готовы, раскомментируй эти роуты
 // app.use('/api/categories', categoriesRouter); // категории
-// app.use('/api/feedbacks', feedbacksRouter); // отзывы
+app.use('/api/feedbacks', feedbackRouter); // отзывы
 
 // ===== Handlers =====
 app.use(notFoundHandler);

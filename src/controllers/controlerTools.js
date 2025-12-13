@@ -44,6 +44,11 @@ const totalPages = Math.ceil(totalTools / limit);
 
 export const createTool = async (req, res, next) => {
   try {
+    // reject empty request body
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return next(createHttpError(400, 'Request body is empty'));
+    }
+
     const {
       owner,
       category,
@@ -55,21 +60,48 @@ export const createTool = async (req, res, next) => {
       rentalTerms,
     } = req.body;
 
+    // basic required-fields guard (align with schema)
+    if (!owner || !category || !name || !description || !pricePerDay || !images) {
+      return next(createHttpError(400, 'Missing required fields'));
+    }
+
+    const toolName = String(name).trim();
+    if (!toolName) {
+      return next(createHttpError(400, 'Name cannot be empty'));
+    }
+
+    // helper to escape regex special chars
+    const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // check existing tool by name (case-insensitive exact match)
+    const existing = await Tool.findOne({
+      name: { $regex: `^${escapeRegExp(toolName)}$`, $options: 'i' },
+    });
+
+    if (existing) {
+      return next(createHttpError(409, 'Tool with this name already exists'));
+    }
+
     const newTool = await Tool.create({
       owner,
       category,
-      name,
+      name: toolName,
       description,
       pricePerDay,
       images,
       specifications: specifications || {},
       rentalTerms: rentalTerms || '',
+      userId: owner, // keep userId populated (no auth flow)
     });
 
     res.status(201).json({
       tool: newTool,
     });
   } catch (error) {
+    console.error('createTool error:', error);
+    if (error && error.name === 'ValidationError') {
+      return next(createHttpError(400, error.message));
+    }
     next(error);
   }
 };

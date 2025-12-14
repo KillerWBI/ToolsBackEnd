@@ -1,7 +1,5 @@
 import { Schema, model } from 'mongoose';
 
-
-
 const CategoryShrma = new Schema(
   {
     title: {
@@ -18,11 +16,11 @@ const CategoryShrma = new Schema(
       type: String,
       required: true,
       trim: true,
-    }
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: false,
+    versionKey: false,
+  }
 );
 export const Category = model('Category', CategoryShrma);
-
-
-

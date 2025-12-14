@@ -13,7 +13,8 @@ import toolsRoutes from './routes/toolsRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
 import bookingsRouter from './routes/bookingsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import feedbackRouter from "./routes/feedbackRoutes.js";
+import feedbackRouter from './routes/feedbackRoutes.js';
+import categoriesRouter from './routes/categoriesRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,8 +30,7 @@ app.use('/api/auth', authRoutes); // авторизация и регистра�
 app.use('/api/tools', toolsRoutes); // инструменты
 app.use('/api/users', usersRoutes); // пользователи
 app.use('/api/bookings', bookingsRouter); // бронирование
-// Как будут готовы, раскомментируй эти роуты
-// app.use('/api/categories', categoriesRouter); // категории
+app.use('/api/categories', categoriesRouter); // категории
 app.use('/api/feedbacks', feedbackRouter); // отзывы
 
 // ===== Handlers =====

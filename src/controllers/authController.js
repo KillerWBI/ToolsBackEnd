@@ -6,14 +6,17 @@ import { Session } from "../models/session.js";
 
 //registration
 export const registerUser = async (req, res, next) => {
-    const {email, password } = req.body;
+    const { name, email, password } = req.body;
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         return next(createHttpError(400, 'Email in use'));
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
+        name,
         email,
         password: hashedPassword,
     });
@@ -26,21 +29,27 @@ export const registerUser = async (req, res, next) => {
 
 //login
 export const loginUser = async (req, res, next) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-        return next(createHttpError(401, 'Invalid credentials'));
-    }
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-        return next(createHttpError(401, 'Invalid credentials'));
-    }
-    await Session.deleteOne({ userId: user._id });
+        const { email, password } = req.body;
 
-    const newSession = await createSession(user._id);
-    setSessionCookies(res, newSession);
+        const user = await User.findOne({ email });
+        if (!user) {
+            return next(createHttpError(401, 'Invalid credentials'));
+        }
 
-    res.status(200).json(user);
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return next(createHttpError(401, 'Invalid credentials'));
+        }
+        await Session.deleteOne({ userId: user._id });
+
+        const newSession = await createSession(user._id);
+        setSessionCookies(res, newSession);
+
+        res.status(200).json({
+            name: user.name,
+            email: user.email,
+            _id: user._id,
+        });
 };
 
 //logout

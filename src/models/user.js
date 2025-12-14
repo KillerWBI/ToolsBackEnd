@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const userSchema = new Schema(
   {
@@ -27,16 +27,16 @@ const userSchema = new Schema(
     avatarUrl: {
       type: String,
       trim: true,
-      default: "",
+      default: '',
     },
   },
   {
-    timestamps: true,
-  }
+    timestamps: true, versionKey: false 
+  },
 );
 
 // ===== Hooks =====
-userSchema.pre("save", function (next) {
+userSchema.pre('save', function (next) {
   if (!this.username) {
     this.username = this.email;
   }
@@ -51,4 +51,4 @@ userSchema.methods.toJSON = function () {
 };
 
 export const User = model("User", userSchema);
-export default User;
+

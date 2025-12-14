@@ -1,18 +1,16 @@
 import { Schema, model } from 'mongoose';
 
-
-
 const toolSchema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
 
     category: {
       type: Schema.Types.ObjectId,
-      ref: "Category",
+      ref: 'Category',
       required: true,
     },
 
@@ -45,36 +43,48 @@ const toolSchema = new Schema(
     },
 
     specifications: {
-      type: Object,
+      type: Map,
       of: String,
       default: {},
     },
 
     rentalTerms: {
       type: String,
-      default: "",
+      default: '',
     },
 
-    bookedDates: {
-      type: [Date],
-      default: [],
-    },
+    bookedDates: [
+      {
+        from: {
+          type: Date,
+          required: true,
+        },
+        to: {
+          type: Date,
+          required: true,
+        },
+      },
+    ],
 
     feedbacks: [
       {
         type: Schema.Types.ObjectId,
-        ref: "feedbacks",
+        ref: 'feedbacks',
       },
     ],
-     userId: {
+    userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
   },
   { timestamps: true }
 );
+
+toolSchema.index({
+  category: 'text',
+  name: 'text',
+  description: 'text',
+});
+
 export const Tool = model('Tool', toolSchema);
-export default Tool;
-
-

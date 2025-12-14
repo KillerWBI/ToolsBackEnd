@@ -10,4 +10,6 @@ router.get('/:userId', getPublicUserById);
 // Инструменты пользователя
 router.get('/:userId/tools', getUserTools);
 
+router.get('/user/:userId', getUserTools);
+
 export default router;

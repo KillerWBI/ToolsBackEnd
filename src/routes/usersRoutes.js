@@ -7,5 +7,5 @@ const router = Router();
 
 router.get('/me', authenticate, getUser);
 router.get('/:userId', getPublicUserById);
-router.get('/user/:userId', getUserTools);
+router.get('/:userId/tools', getUserTools);
 export default router;

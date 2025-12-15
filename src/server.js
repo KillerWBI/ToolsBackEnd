@@ -3,11 +3,13 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { swaggerSpec } from './swagger.js';
 
 import toolsRoutes from './routes/toolsRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
@@ -24,6 +26,9 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(logger);
+
+// ===== API Documentation =====
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ===== Routes =====
 app.use('/api/auth', authRoutes); // авторизация и регистрация
@@ -43,4 +48,7 @@ await connectMongoDB();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(
+    `API Documentation available at http://localhost:${PORT}/api-docs`
+  );
 });

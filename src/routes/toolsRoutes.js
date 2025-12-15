@@ -5,6 +5,7 @@ import {
   createTool,
   DeleteTool,
   getAllTools,
+  getToolById,
   updateTool,
 } from '../controllers/controlerTools.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -76,7 +77,69 @@ const router = Router();
  *                     $ref: '#/components/schemas/Tool'
  */
 router.get('/', getAllTools);
-
+/**
+ * @swagger
+ * /api/tools/{toolId}:
+ *   get:
+ *     summary: Get tool details by ID (Public)
+ *     description: Retrieve detailed information about a specific tool including its category, feedbacks, specifications, booked dates, and average rating
+ *     tags: [Tools]
+ *     parameters:
+ *       - in: path
+ *         name: toolId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Tool ID (MongoDB ObjectId)
+ *         example: 507f1f77bcf86cd799439012
+ *     responses:
+ *       200:
+ *         description: Tool details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Tool'
+ *             example:
+ *               _id: 507f1f77bcf86cd799439012
+ *               owner: 507f1f77bcf86cd799439011
+ *               userId: 507f1f77bcf86cd799439011
+ *               category:
+ *                 _id: 507f1f77bcf86cd799439013
+ *                 title: Power Tools
+ *                 description: Electric and battery-powered tools
+ *               name: Electric Drill XYZ-2000
+ *               description: Professional electric drill with 800W motor, suitable for various materials
+ *               pricePerDay: 150
+ *               images: https://example.com/images/drill.jpg
+ *               rating: 4.5
+ *               specifications:
+ *                 power: 800W
+ *                 weight: 2.5kg
+ *                 maxDrillDiameter: 13mm
+ *               rentalTerms: Minimum rental period - 1 day. Deposit required - 500 UAH.
+ *               bookedDates:
+ *                 - from: "2025-12-20T00:00:00.000Z"
+ *                   to: "2025-12-25T00:00:00.000Z"
+ *               feedbacks:
+ *                 - _id: 507f1f77bcf86cd799439015
+ *                   toolId: 507f1f77bcf86cd799439012
+ *                   owner: 507f1f77bcf86cd799439011
+ *                   name: John Doe
+ *                   description: Excellent tool! Very powerful and reliable.
+ *                   rate: 5
+ *                   createdAt: "2025-12-15T10:00:00.000Z"
+ *               createdAt: "2025-12-15T10:00:00.000Z"
+ *               updatedAt: "2025-12-15T10:00:00.000Z"
+ *       404:
+ *         description: Tool not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: Tool not found
+ */
+router.get('/:toolId', getToolById);
 // ===== PROTECTED ROUTES =====
 router.use('/', authenticate);
 

@@ -3,17 +3,14 @@ import { Tool } from '../models/tool.js';
 
 export const getAllTools = async (req, res) => {
   const { search, category } = req.query;
-  
+
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 16;
   const filter = {};
 
   const skip = (page - 1) * limit;
 
-  
-
-
-  if(search) {
+  if (search) {
     toolsQuery.where({ $text: { $search: search } });
   }
 
@@ -29,7 +26,7 @@ export const getAllTools = async (req, res) => {
     toolsQuery.skip(skip).limit(limit),
   ]);
 
-const totalPages = Math.ceil(totalTools / limit);
+  const totalPages = Math.ceil(totalTools / limit);
 
   res.status(200).json({
     page,
@@ -38,9 +35,7 @@ const totalPages = Math.ceil(totalTools / limit);
     totalTools,
     tools: [...tools],
   });
-
 };
-
 
 export const createTool = async (req, res, next) => {
   try {
@@ -61,7 +56,14 @@ export const createTool = async (req, res, next) => {
     } = req.body;
 
     // basic required-fields guard (align with schema)
-    if (!owner || !category || !name || !description || !pricePerDay || !images) {
+    if (
+      !owner ||
+      !category ||
+      !name ||
+      !description ||
+      !pricePerDay ||
+      !images
+    ) {
       return next(createHttpError(400, 'Missing required fields'));
     }
 
@@ -106,21 +108,44 @@ export const createTool = async (req, res, next) => {
   }
 };
 
-
-
+// Получить инструмент по ID (публичный)
 export const getToolById = async (req, res, next) => {
-  const { toolId } = req.params;
-  const tool = await Tool.findOne({
-    _id: toolId,
-    userId: req.user._id,
-  });
+  try {
+    const { toolId } = req.params;
 
-  if (!tool) {
-    next(createHttpError(404, 'Tool not found'));
-    return;
+    const tool = await Tool.findById(toolId)
+      .populate('category feedbacks')
+      .lean();
+
+    if (!tool) {
+      return next(createHttpError(404, 'Tool not found'));
+    }
+
+    res.status(200).json(tool);
+  } catch (error) {
+    next(error);
   }
+};
 
-  res.status(200).json(tool);
+// Получить инструмент по ID (только владелец)
+export const getUserToolById = async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+    const userId = req.user._id;
+
+    const tool = await Tool.findOne({
+      _id: toolId,
+      $or: [{ owner: userId }, { userId: userId }],
+    });
+
+    if (!tool) {
+      return next(createHttpError(404, 'Tool not found'));
+    }
+
+    res.status(200).json(tool);
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const updateTool = async (req, res) => {
@@ -142,7 +167,6 @@ export const DeleteTool = async (req, res, next) => {
     const { toolId } = req.params;
     const userId = req.user._id;
 
-
     const tool = await Tool.findById(toolId);
     if (!tool) {
       next(createHttpError(404, 'Tool not found'));
@@ -162,6 +186,3 @@ export const DeleteTool = async (req, res, next) => {
     next(err);
   }
 };
-
-
-

@@ -84,3 +84,6 @@ web_modules/
 # ===== Testing =====
 .vscode-test
 lib-cov
+CLOUDINARY_README.md
+CLOUDINARY_UPLOAD_GUIDE.md
+package-lock.json

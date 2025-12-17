@@ -127,10 +127,19 @@ const swaggerDefinition = {
             example: 150,
           },
           images: {
-            type: 'string',
+            type: 'array',
+            items: {
+              type: 'string',
+              format: 'uri',
+            },
+            minItems: 1,
+            maxItems: 5,
             description:
-              'URL or path to tool images (comma-separated if multiple)',
-            example: 'https://example.com/images/drill.jpg',
+              'Array of tool image URLs from Cloudinary (1-5 images)',
+            example: [
+              'https://res.cloudinary.com/demo/image/upload/v1640000000/tools-rental/drill-1.jpg',
+              'https://res.cloudinary.com/demo/image/upload/v1640000001/tools-rental/drill-2.jpg',
+            ],
           },
           rating: {
             type: 'number',

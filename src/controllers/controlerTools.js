@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import { Tool } from '../models/tool.js';
+import { uploadMultipleImagesToCloudinary } from '../services/cloudinary.js';
 
 export const getAllTools = async (req, res) => {
   const { search, category } = req.query;
@@ -7,13 +8,14 @@ export const getAllTools = async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 16;
   const filter = {};
-
   const skip = (page - 1) * limit;
 
+  // Add text search to filter
   if (search) {
-    toolsQuery.where({ $text: { $search: search } });
+    filter.$text = { $search: search };
   }
 
+  // Add category filter
   if (category) {
     const categoryIds = category.split(',');
     filter.category = { $in: categoryIds };
@@ -44,26 +46,29 @@ export const createTool = async (req, res, next) => {
       return next(createHttpError(400, 'Request body is empty'));
     }
 
-    const {
+    let {
       owner,
       category,
       name,
       description,
       pricePerDay,
-      images,
       specifications,
       rentalTerms,
     } = req.body;
 
-    // basic required-fields guard (align with schema)
-    if (
-      !owner ||
-      !category ||
-      !name ||
-      !description ||
-      !pricePerDay ||
-      !images
-    ) {
+    // Parse specifications if it's a JSON string (from multipart/form-data)
+    if (typeof specifications === 'string') {
+      try {
+        specifications = JSON.parse(specifications);
+      } catch {
+        return next(
+          createHttpError(400, 'Invalid JSON format for specifications')
+        );
+      }
+    }
+
+    // Проверка обязательных полей
+    if (!owner || !category || !name || !description || !pricePerDay) {
       return next(createHttpError(400, 'Missing required fields'));
     }
 
@@ -84,16 +89,37 @@ export const createTool = async (req, res, next) => {
       return next(createHttpError(409, 'Tool with this name already exists'));
     }
 
+    // Обработка загруженных фотографий
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      try {
+        images = await uploadMultipleImagesToCloudinary(req.files);
+      } catch (uploadError) {
+        console.error('Error uploading images:', uploadError);
+        return next(createHttpError(400, 'Error uploading images'));
+      }
+    }
+
+    // Если нет загруженных файлов, используем изображение из body (если было)
+    if (images.length === 0 && req.body.imageUrl) {
+      images = [req.body.imageUrl];
+    }
+
+    // Минимум одна фотография
+    if (images.length === 0) {
+      return next(createHttpError(400, 'At least one image is required'));
+    }
+
     const newTool = await Tool.create({
       owner,
       category,
       name: toolName,
       description,
       pricePerDay,
-      images,
+      images, // массив URL
       specifications: specifications || {},
       rentalTerms: rentalTerms || '',
-      userId: owner, // keep userId populated (no auth flow)
+      userId: owner,
     });
 
     res.status(201).json({

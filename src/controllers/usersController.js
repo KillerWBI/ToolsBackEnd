@@ -49,6 +49,7 @@ export const getUser = async (req, res, next) => {
         id: userId,
         name: user.name,
         email: user.email,
+        avatar: user.avatarUrl,
       },
     });
   } catch (error) {
@@ -66,9 +67,9 @@ export const updateUserAvatar = async (req, res, next) => {
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { avatar: result.secure_url },
-    { new: true },
+    { avatarUrl: result.secure_url },
+    { new: true }
   );
 
-  res.status(200).json({ url: user.avatar });
+  res.status(200).json({ url: user.avatarUrl });
 };

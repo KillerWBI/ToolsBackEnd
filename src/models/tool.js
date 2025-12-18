@@ -78,11 +78,6 @@ const toolSchema = new Schema(
         ref: 'feedbacks',
       },
     ],
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
   },
   { timestamps: true, versionKey: false }
 );

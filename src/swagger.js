@@ -99,11 +99,7 @@ const swaggerDefinition = {
             description: 'User ID of tool owner',
             example: '507f1f77bcf86cd799439011',
           },
-          userId: {
-            type: 'string',
-            description: 'Duplicate of owner for compatibility',
-            example: '507f1f77bcf86cd799439011',
-          },
+
           category: {
             type: 'string',
             description: 'Category ID',

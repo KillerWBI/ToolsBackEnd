@@ -103,7 +103,7 @@ router.get('/', getAllTools);
  *             example:
  *               _id: 507f1f77bcf86cd799439012
  *               owner: 507f1f77bcf86cd799439011
- *               userId: 507f1f77bcf86cd799439011
+ *
  *               category:
  *                 _id: 507f1f77bcf86cd799439013
  *                 title: Power Tools
@@ -154,7 +154,7 @@ router.use('/', authenticate);
  *       - Requires authentication
  *       - Tool name must be unique
  *       - Can upload 1-5 images (JPEG, PNG, WebP, GIF)
- *       - Each image max 5MB
+ *       - Each image max 1MB
  *       - If no images uploaded, imageUrl field is required
  *     tags: [Tools]
  *     security:
@@ -211,7 +211,7 @@ router.use('/', authenticate);
  *                   type: string
  *                   format: binary
  *                 maxItems: 5
- *                 description: Tool images (1-5 files, max 5MB each). Formats - JPEG, PNG, WebP, GIF
+ *                 description: Tool images (1-5 files, max 1MB each). Formats - JPEG, PNG, WebP, GIF
  *     responses:
  *       201:
  *         description: Tool created successfully with images uploaded to Cloudinary

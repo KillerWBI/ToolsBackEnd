@@ -119,7 +119,6 @@ export const createTool = async (req, res, next) => {
       images, // массив URL
       specifications: specifications || {},
       rentalTerms: rentalTerms || '',
-      userId: owner,
     });
 
     res.status(201).json({
@@ -161,7 +160,7 @@ export const getUserToolById = async (req, res, next) => {
 
     const tool = await Tool.findOne({
       _id: toolId,
-      $or: [{ owner: userId }, { userId: userId }],
+      owner: userId,
     });
 
     if (!tool) {

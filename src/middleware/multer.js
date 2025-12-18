@@ -5,7 +5,7 @@ import createHttpError from 'http-errors';
 const storage = multer.memoryStorage(); // Зберігаємо файл у пам'яті (буфер)
 
 const limits = {
-  fileSize: 5 * 1024 * 1024, // 5MB
+  fileSize: 1 * 1024 * 1024, // 1MB
   files: 5, // Max 5 files
 };
 

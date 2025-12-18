@@ -5,16 +5,22 @@ import createHttpError from 'http-errors';
 const storage = multer.memoryStorage(); // Зберігаємо файл у пам'яті (буфер)
 
 const limits = {
-  fileSize: 2 * 1024 * 1024, // 2MB
+  fileSize: 1 * 1024 * 1024, // 1MB
+  files: 5, // Max 5 files
 };
 
 // Фільтр для перевірки типу файлу
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+  if (allowedMimes.includes(file.mimetype)) {
     cb(null, true); // Дозволяємо файл
   } else {
     // Відхиляємо файл
-    cb(createHttpError(400, 'Only images allowed'), false);
+    cb(
+      createHttpError(400, 'Only JPEG, PNG, WebP and GIF images allowed'),
+      false
+    );
   }
 };
 

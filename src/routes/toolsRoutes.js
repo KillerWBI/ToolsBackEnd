@@ -9,6 +9,7 @@ import {
   updateTool,
 } from '../controllers/controlerTools.js';
 import { authenticate } from '../middleware/authenticate.js';
+import { upload } from '../middleware/multer.js';
 import {
   createToolSchema,
   DeleteToolShema,
@@ -102,7 +103,7 @@ router.get('/', getAllTools);
  *             example:
  *               _id: 507f1f77bcf86cd799439012
  *               owner: 507f1f77bcf86cd799439011
- *               userId: 507f1f77bcf86cd799439011
+ *
  *               category:
  *                 _id: 507f1f77bcf86cd799439013
  *                 title: Power Tools
@@ -148,14 +149,20 @@ router.use('/', authenticate);
  * /api/tools:
  *   post:
  *     summary: Create a new tool (Protected)
- *     description: Add a new tool to the platform. Requires authentication. Tool name must be unique.
+ *     description: |
+ *       Add a new tool to the platform with image uploads to Cloudinary.
+ *       - Requires authentication
+ *       - Tool name must be unique
+ *       - Can upload 1-5 images (JPEG, PNG, WebP, GIF)
+ *       - Each image max 1MB
+ *       - If no images uploaded, imageUrl field is required
  *     tags: [Tools]
  *     security:
  *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -164,7 +171,6 @@ router.use('/', authenticate);
  *               - name
  *               - description
  *               - pricePerDay
- *               - images
  *             properties:
  *               owner:
  *                 type: string
@@ -187,25 +193,28 @@ router.use('/', authenticate);
  *                 minimum: 0
  *                 description: Daily rental price
  *                 example: 150
- *               images:
- *                 type: string
- *                 description: Image URL or path
- *                 example: https://example.com/images/drill.jpg
  *               specifications:
- *                 type: object
- *                 additionalProperties:
- *                   type: string
- *                 description: Tool specifications (optional)
- *                 example:
- *                   power: 800W
- *                   weight: 2.5kg
+ *                 type: string
+ *                 description: JSON string of specifications (optional)
+ *                 example: '{"power":"800W","weight":"2.5kg"}'
  *               rentalTerms:
  *                 type: string
  *                 description: Rental terms and conditions (optional)
  *                 example: Minimum rental period 1 day
+ *               imageUrl:
+ *                 type: string
+ *                 description: Image URL (if not uploading files)
+ *                 example: https://example.com/images/drill.jpg
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 maxItems: 5
+ *                 description: Tool images (1-5 files, max 1MB each). Formats - JPEG, PNG, WebP, GIF
  *     responses:
  *       201:
- *         description: Tool created successfully
+ *         description: Tool created successfully with images uploaded to Cloudinary
  *         content:
  *           application/json:
  *             schema:
@@ -214,21 +223,21 @@ router.use('/', authenticate);
  *                 tool:
  *                   $ref: '#/components/schemas/Tool'
  *       400:
- *         description: Bad request - Validation error or empty request body
+ *         description: Bad request - Validation error, missing fields, or invalid images
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
  *             examples:
- *               emptyBody:
- *                 value:
- *                   message: Request body is empty
  *               missingFields:
  *                 value:
  *                   message: Missing required fields
- *               emptyName:
+ *               noImages:
  *                 value:
- *                   message: Name cannot be empty
+ *                   message: At least one image is required
+ *               invalidImage:
+ *                 value:
+ *                   message: Error uploading images
  *       401:
  *         description: Unauthorized - Authentication required
  *         content:
@@ -244,7 +253,12 @@ router.use('/', authenticate);
  *             example:
  *               message: Tool with this name already exists
  */
-router.post('/', celebrate(createToolSchema), createTool);
+router.post(
+  '/',
+  upload.array('images', 5),
+  celebrate(createToolSchema),
+  createTool
+);
 
 /**
  * @swagger

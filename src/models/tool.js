@@ -31,8 +31,14 @@ const toolSchema = new Schema(
     },
 
     images: {
-      type: String,
+      type: [String],
       required: true,
+      validate: {
+        validator: function (arr) {
+          return arr.length > 0 && arr.length <= 5;
+        },
+        message: 'Images array must contain 1-5 items',
+      },
     },
 
     rating: {
@@ -72,13 +78,8 @@ const toolSchema = new Schema(
         ref: 'feedbacks',
       },
     ],
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 toolSchema.index({

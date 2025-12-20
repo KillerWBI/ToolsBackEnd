@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { getPublicUserById, getUser } from '../controllers/usersController.js';
+import { getPublicUserById, getUser, updateUserAvatar } from '../controllers/usersController.js';
 import { authenticate } from '../middleware/authenticate.js';
 import getUserTools from '../controllers/userToolsController.js';
+import { upload } from "../middleware/multer.js";
 
 const router = Router();
 
@@ -151,5 +152,6 @@ router.get('/:userId', getPublicUserById);
  *                   example: Користувача не знайдено
  */
 router.get('/:userId/tools', getUserTools);
+router.patch('/me/avatar', authenticate, upload.single("avatar"), updateUserAvatar);
 
 export default router;

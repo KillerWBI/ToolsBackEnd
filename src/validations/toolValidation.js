@@ -55,9 +55,12 @@ export const updateToolSchema = {
     name: Joi.string().min(3).max(200),
     description: Joi.string().min(10),
     pricePerDay: Joi.number().min(1),
-    images: Joi.string().uri(),
+    images: Joi.alternatives().try(
+      Joi.string().uri(),
+      Joi.array().items(Joi.string().uri()).min(1).max(5)
+    ),
     rating: Joi.number().min(0).max(5),
-    specifications: Joi.array().items(Joi.string()),
+    specifications: Joi.object().pattern(Joi.string(), Joi.string()),
     rentalTerms: Joi.string(),
     bookedDates: Joi.array().items(Joi.date()),
     feedbacks: Joi.array().items(

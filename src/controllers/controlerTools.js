@@ -175,9 +175,21 @@ export const getUserToolById = async (req, res, next) => {
 
 export const updateTool = async (req, res) => {
   const { toolId } = req.params;
+  const body = { ...req.body };
+
+  if (body.images != null) {
+    if (typeof body.images === 'string') {
+      body.images = [body.images];
+    } else if (Array.isArray(body.images)) {
+      body.images = body.images.filter(Boolean).slice(0, 5);
+    } else {
+      return createHttpError(400, 'Invalid images format');
+    }
+  }
 
   const tool = await Tool.findOneAndUpdate({ _id: toolId }, req.body, {
     new: true,
+    runValidators: true,
   });
 
   if (!tool) {

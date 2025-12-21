@@ -22,12 +22,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ===== Middleware =====
-app.use(cors({
-  origin: ["https://tool-next-mauve.vercel.app",
-    "https://tool-next-5gxh97ijm-killercodes-projects.vercel.app",
-    "http://localhost:3000"],
-  credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(logger);

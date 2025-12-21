@@ -5,10 +5,10 @@ import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 const { isValidObjectId } = mongoose;
 
-const mapUserToPublicDto = (userDoc) => ({
-  id: userDoc._id.toString(),
-  name: userDoc.name,
-  avatarUrl: userDoc.avatarUrl || '',
+const mapUserToPublicDto = (user) => ({
+  id: user._id.toString(),
+  name: user.name,
+  avatarUrl: user.avatarUrl || '',
 });
 
 export const getPublicUserById = async (req, res, next) => {
@@ -59,8 +59,7 @@ export const getUser = async (req, res, next) => {
 
 export const updateUserAvatar = async (req, res, next) => {
   if (!req.file) {
-    next(createHttpError(400, 'No file'));
-    return;
+    throw createHttpError(400, 'No file');
   }
 
   const result = await saveFileToCloudinary(req.file.buffer);

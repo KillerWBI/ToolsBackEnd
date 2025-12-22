@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import { getPublicUserById, getUser, updateUserAvatar } from '../controllers/usersController.js';
+import {
+  getPublicUserById,
+  getUser,
+  updateUserAvatar,
+} from '../controllers/usersController.js';
 import { authenticate } from '../middleware/authenticate.js';
 import getUserTools from '../controllers/userToolsController.js';
-import { upload } from "../middleware/multer.js";
+import { upload } from '../middleware/multer.js';
 
 const router = Router();
 
@@ -152,6 +156,59 @@ router.get('/:userId', getPublicUserById);
  *                   example: Користувача не знайдено
  */
 router.get('/:userId/tools', getUserTools);
-router.patch('/me/avatar', authenticate, upload.single("avatar"), updateUserAvatar);
+/**
+ * @swagger
+ * /api/users/me/avatar:
+ *   patch:
+ *     summary: Update user avatar (Protected)
+ *     description: Upload and update the authenticated user's avatar image
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *                 description: Image file (JPEG, PNG, WebP, GIF, max 1MB)
+ *     responses:
+ *       200:
+ *         description: Avatar updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 url:
+ *                   type: string
+ *                   example: https://res.cloudinary.com/demo/image/upload/v1234567890/avatar.jpg
+ *       400:
+ *         description: Bad request - No file uploaded or invalid file type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: No file
+ *       401:
+ *         description: Unauthorized - Authentication required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: Not authenticated
+ */
+router.patch(
+  '/me/avatar',
+  authenticate,
+  upload.single('avatar'),
+  updateUserAvatar
+);
 
 export default router;

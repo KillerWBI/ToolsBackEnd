@@ -20,6 +20,7 @@
     "dotenv": "^17.2.3",
     "eslint": "^9.38.0",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "http-errors": "^2.0.0",
     "mongodb": "^7.0.0",
     "mongoose": "^8.20.2",

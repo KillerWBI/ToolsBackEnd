@@ -5,6 +5,8 @@ import 'dotenv/config';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 
+import helmet from 'helmet';
+
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './middleware/logger.js';
@@ -22,7 +24,36 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ===== Middleware =====
-app.use(cors());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
+      },
+    },
+  })
+);
+
+const allowedOrigins = [
+  'https://tool-next-mauve.vercel.app',
+  'http://localhost:3000',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(logger);

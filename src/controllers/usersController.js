@@ -58,17 +58,25 @@ export const getUser = async (req, res, next) => {
 };
 
 export const updateUserAvatar = async (req, res, next) => {
-  if (!req.file) {
-    throw createHttpError(400, 'No file');
+  try {
+    // Перевіряємо, чи був завантажений файл
+    if (!req.file) {
+      throw createHttpError(400, 'No file');
+    }
+
+    // Зберігаємо файл у Cloudinary
+    const result = await saveFileToCloudinary(req.file.buffer);
+
+    // Оновлюємо URL аватара користувача в базі даних
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatarUrl: result.secure_url },
+      { new: true }
+    );
+
+    // Повертаємо оновлений URL
+    res.status(200).json({ url: user.avatarUrl });
+  } catch (error) {
+    next(error);
   }
-
-  const result = await saveFileToCloudinary(req.file.buffer);
-
-  const user = await User.findByIdAndUpdate(
-    req.user._id,
-    { avatarUrl: result.secure_url },
-    { new: true }
-  );
-
-  res.status(200).json({ url: user.avatarUrl });
 };

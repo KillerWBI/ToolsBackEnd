@@ -40,6 +40,7 @@ app.use(
 const allowedOrigins = [
   'https://tool-next-mauve.vercel.app',
   'http://localhost:3000',
+  'https://toolsbackend-zzml.onrender.com',
 ];
 
 app.use(

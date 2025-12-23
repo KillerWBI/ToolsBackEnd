@@ -41,7 +41,7 @@ export const createFeedback = async (req, res, next) => {
 
     // 3. Додаємо ID відгуку в масив інструменту
     await Tool.findByIdAndUpdate(toolId, {
-      $push: { feedbacks: feedback._id },
+      $push: { feedbacks: { _id: feedback._id } },
     });
 
     // 4. Перераховуємо середній рейтинг інструменту

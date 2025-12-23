@@ -74,8 +74,10 @@ const toolSchema = new Schema(
 
     feedbacks: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'feedbacks',
+        _id: {
+          type: Schema.Types.ObjectId,
+          ref: 'feedbacks',
+        },
       },
     ],
   },

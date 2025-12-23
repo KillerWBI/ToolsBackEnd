@@ -139,7 +139,11 @@ export const getToolById = async (req, res, next) => {
     const { toolId } = req.params;
 
     const tool = await Tool.findById(toolId)
-      .populate('category feedbacks')
+      .populate('category')
+      .populate({
+        path: 'feedbacks',
+        model: 'feedbacks',
+      })
       .lean();
 
     if (!tool) {

@@ -21,7 +21,7 @@ export const getUserTools = async (req, res, next) => {
     const tools = await Tool.find({ owner: userObjectId }).lean();
 
     res.status(200).json({
-      message: 'Список инструментов пользователя получен',
+      message: 'Список інструментів користувача отримано',
       data: tools,
     });
   } catch (error) {

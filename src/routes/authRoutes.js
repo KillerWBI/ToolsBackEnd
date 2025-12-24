@@ -6,11 +6,13 @@ import {
   registerUser,
   logoutUser,
   refreshUserSession,
+  requestResetEmail,
 } from '../controllers/authController.js';
 
 import {
   loginUserSchema,
   registerUserSchema,
+  requestResetEmailSchema,
 } from '../validations/authValidation.js';
 
 const router = Router();
@@ -201,5 +203,7 @@ router.post('/logout', logoutUser);
  *                   message: Session token expired
  */
 router.post('/refresh', refreshUserSession);
+
+router.post('/request-reset-email', celebrate(requestResetEmailSchema), requestResetEmail);
 
 export default router;

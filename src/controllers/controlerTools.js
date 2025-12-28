@@ -3,25 +3,61 @@ import { Tool } from '../models/tool.js';
 import { uploadMultipleImagesToCloudinary } from '../services/cloudinary.js';
 
 export const getAllTools = async (req, res) => {
-  const { search, category } = req.query;
+  const {
+    search,
+    category,
+    priceFrom,
+    priceTo,
+    sort,
+  } = req.query;
 
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 16;
-  const filter = {};
   const skip = (page - 1) * limit;
 
-  // Add text search to filter
+  const filter = {};
+
   if (search) {
-    filter.$text = { $search: search };
-  }
+  filter.$or = [
+    { name: { $regex: search, $options: 'i' } },
+    { description: { $regex: search, $options: 'i' } },
+  ];
+}
 
-  // Add category filter
+
   if (category) {
-    const categoryIds = category.split(',');
-    filter.category = { $in: categoryIds };
+    filter.category = { $in: category.split(',') };
   }
 
-  const toolsQuery = Tool.find(filter);
+  if (priceFrom || priceTo) {
+    filter.pricePerDay = {};
+  if (priceFrom) filter.pricePerDay.$gte = Number(priceFrom);
+  if (priceTo) filter.pricePerDay.$lte = Number(priceTo);
+  }
+
+
+  let sortOption = {};
+
+  switch (sort) {
+    case 'name_asc':
+      sortOption = { name: 1 };
+      break;
+    case 'name_desc':
+      sortOption = { name: -1 };
+      break;
+    case 'price_asc':
+      sortOption = { pricePerDay: 1 };
+      break;
+    case 'price_desc':
+      sortOption = { pricePerDay: -1 };
+      break;
+    case 'popular':
+    default:
+      sortOption = { rating: -1 }; 
+      break;
+  }
+
+  const toolsQuery = Tool.find(filter).sort(sortOption);
 
   const [totalTools, tools] = await Promise.all([
     toolsQuery.clone().countDocuments(),
@@ -35,7 +71,7 @@ export const getAllTools = async (req, res) => {
     totalPages,
     limit,
     totalTools,
-    tools: [...tools],
+    tools,
   });
 };
 

@@ -84,10 +84,15 @@ const toolSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
-toolSchema.index({
-  category: 'text',
-  name: 'text',
-  description: 'text',
-});
+toolSchema.index({ rating: -1, ratingCount: -1 });
+toolSchema.index({ name: 1 });
+toolSchema.index({ pricePerDay: 1 });
+toolSchema.index({ pricePerDay: -1 });
+
+// toolSchema.index({
+//   category: 'text',
+//   name: 'text',
+//   description: 'text',
+// });
 
 export const Tool = model('Tool', toolSchema);

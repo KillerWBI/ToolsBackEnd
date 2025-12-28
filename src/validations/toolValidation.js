@@ -16,6 +16,17 @@ export const getAllToolsSchema = {
     category: Joi.string()
       .pattern(/^[a-f\d,]+$/i)
       .optional(),
+    priceFrom: Joi.number().min(0).optional(),
+    priceTo: Joi.number().min(0).optional(),
+    sort: Joi.string()
+      .valid(
+        'popular',
+        'name_asc',
+        'name_desc',
+        'price_asc',
+        'price_desc'
+      )
+      .default('popular'),
   }),
 };
 

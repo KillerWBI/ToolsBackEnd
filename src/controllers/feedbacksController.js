@@ -1,12 +1,24 @@
 import { Feedbacks } from '../models/feedback.js';
 import { Tool } from '../models/tool.js';
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 
 // GET /feedbacks (список з пагінацією)
 export const getLatestFeedbacks = async (req, res, next) => {
   try {
+    const { toolId } = req.query;
+
+    if (toolId && !mongoose.Types.ObjectId.isValid(toolId)) {
+      return next(createHttpError(400, 'Invalid toolId'));
+    }
+
+    const filter = toolId ? { toolId } : {};
+
+    if (toolId) {
+      filter.toolId = toolId;
+    }
     // Беремо останні 10 відгуків
-    const feedbacks = await Feedbacks.find()
+    const feedbacks = await Feedbacks.find(filter)
       .sort({ createdAt: -1 }) // новіші зверху
       .limit(10);
 

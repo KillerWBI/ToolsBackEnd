@@ -1,60 +1,60 @@
-import createHttpError from "http-errors";
+import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
-import bcrypt from "bcryptjs";
-import { createSession, setSessionCookies  } from "../services/auth.js";
-import { Session } from "../models/session.js";
+import bcrypt from 'bcryptjs';
+import { createSession, setSessionCookies } from '../services/auth.js';
+import { Session } from '../models/session.js';
 import jwt from 'jsonwebtoken';
-import { sendEmail } from "../utils/sendEmail.js";
-import Handlebars from "handlebars";
+import { sendEmail } from '../utils/sendEmail.js';
+import Handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
 //registration
 export const registerUser = async (req, res, next) => {
-    const { name, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        return next(createHttpError(400, 'Email in use'));
-    }
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return next(createHttpError(400, 'Email in use'));
+  }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-    });
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  });
 
-    const newSession = await createSession(newUser._id);
-    setSessionCookies(res, newSession);
+  const newSession = await createSession(newUser._id);
+  setSessionCookies(res, newSession);
 
-    res.status(201).json(newUser);
+  res.status(201).json(newUser);
 };
 
 //login
 export const loginUser = async (req, res, next) => {
-        const { email, password } = req.body;
+  const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return next(createHttpError(401, 'Invalid credentials'));
-        }
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(createHttpError(401, 'Invalid credentials'));
+  }
 
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-            return next(createHttpError(401, 'Invalid credentials'));
-        }
-        await Session.deleteOne({ userId: user._id });
+  const isValidPassword = await bcrypt.compare(password, user.password);
+  if (!isValidPassword) {
+    return next(createHttpError(401, 'Invalid credentials'));
+  }
+  await Session.deleteOne({ userId: user._id });
 
-        const newSession = await createSession(user._id);
-        setSessionCookies(res, newSession);
+  const newSession = await createSession(user._id);
+  setSessionCookies(res, newSession);
 
-        res.status(200).json({
-            name: user.name,
-            email: user.email,
-            _id: user._id,
-        });
+  res.status(200).json({
+    name: user.name,
+    email: user.email,
+    _id: user._id,
+  });
 };
 
 //logout
@@ -134,9 +134,43 @@ export const requestResetEmail = async (req, res) => {
       html,
     });
   } catch {
-    throw createHttpError(500, 'Failed to send the email, please try again later.');
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.'
+    );
   }
   res.status(200).json({
     message: 'If this email exists, a reset link has been sent',
   });
+};
+
+export const resetPassword = async (req, res, next) => {
+  const { token, password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.sub);
+    if (!user) {
+      return next(createHttpError(404, 'User not found'));
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate(user._id, { password: hashedPassword });
+
+    // Delete all sessions for this user
+    await Session.deleteMany({ userId: user._id });
+
+    res.status(200).json({
+      message: 'Password has been successfully reset',
+    });
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return next(createHttpError(401, 'Reset token has expired'));
+    }
+    if (error.name === 'JsonWebTokenError') {
+      return next(createHttpError(401, 'Invalid reset token'));
+    }
+    return next(error);
+  }
 };

@@ -7,12 +7,14 @@ import {
   logoutUser,
   refreshUserSession,
   requestResetEmail,
+  resetPassword,
 } from '../controllers/authController.js';
 
 import {
   loginUserSchema,
   registerUserSchema,
   requestResetEmailSchema,
+  resetPasswordSchema,
 } from '../validations/authValidation.js';
 
 const router = Router();
@@ -204,6 +206,124 @@ router.post('/logout', logoutUser);
  */
 router.post('/refresh', refreshUserSession);
 
-router.post('/request-reset-email', celebrate(requestResetEmailSchema), requestResetEmail);
+/**
+ * @swagger
+ * /api/auth/request-reset-email:
+ *   post:
+ *     summary: Request password reset email
+ *     description: Send a password reset link to the user's email address. The link contains a JWT token valid for 15 minutes.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john.doe@example.com
+ *     responses:
+ *       200:
+ *         description: Reset email sent successfully (or email not found - same response for security)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: If this email exists, a reset link has been sent
+ *       400:
+ *         description: Bad request - Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ *       500:
+ *         description: Internal server error - Failed to send email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: Failed to send the email, please try again later.
+ */
+router.post(
+  '/request-reset-email',
+  celebrate(requestResetEmailSchema),
+  requestResetEmail
+);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset password using token
+ *     description: Reset user password using the token received via email. Token is valid for 15 minutes.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - password
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: JWT reset token from email link
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 128
+ *                 description: New password
+ *                 example: NewSecurePass123
+ *     responses:
+ *       200:
+ *         description: Password reset successful. All user sessions are terminated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password has been successfully reset
+ *       400:
+ *         description: Bad request - Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ValidationError'
+ *       401:
+ *         description: Unauthorized - Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               tokenExpired:
+ *                 value:
+ *                   message: Reset token has expired
+ *               invalidToken:
+ *                 value:
+ *                   message: Invalid reset token
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               message: User not found
+ */
+router.post('/reset-password', celebrate(resetPasswordSchema), resetPassword);
 
 export default router;

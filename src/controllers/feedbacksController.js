@@ -1,28 +1,39 @@
+import mongoose from 'mongoose';
 import { Feedbacks } from '../models/feedback.js';
 import { Tool } from '../models/tool.js';
 import createHttpError from 'http-errors';
-import mongoose from 'mongoose';
 
 // GET /feedbacks (список з пагінацією)
 export const getLatestFeedbacks = async (req, res, next) => {
   try {
-    const { toolId } = req.query;
 
-    if (toolId && !mongoose.Types.ObjectId.isValid(toolId)) {
-      return next(createHttpError(400, 'Invalid toolId'));
-    }
-
-    const filter = toolId ? { toolId } : {};
-
-    if (toolId) {
-      filter.toolId = toolId;
-    }
     // Беремо останні 10 відгуків
-    const feedbacks = await Feedbacks.find(filter)
+    const feedbacks = await Feedbacks.find()
       .sort({ createdAt: -1 }) // новіші зверху
       .limit(10);
 
     // Віддаємо масив на фронт
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFeedbacksByToolId = async (req, res, next) => {
+  try {
+    const { toolId } = req.params;
+
+    if (!toolId) {
+      throw createHttpError(400, "toolId is required");
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(toolId)) {
+      throw createHttpError(400, "Invalid toolId");
+    }
+
+    const feedbacks = await Feedbacks.find({ toolId })
+      .sort({ createdAt: -1 }).limit(10);;
+
     res.status(200).json(feedbacks);
   } catch (error) {
     next(error);

@@ -3,6 +3,7 @@ import { celebrate } from 'celebrate';
 import {
   getLatestFeedbacks,
   createFeedback,
+  getFeedbacksByToolId,
 } from '../controllers/feedbacksController.js';
 import { authenticate } from '../middleware/authenticate.js';
 import { createFeedbackSchema } from '../validations/feedbackValidation.js';
@@ -113,5 +114,8 @@ router.get('/', getLatestFeedbacks);
  *               message: Tool not found
  */
 router.post('/', authenticate, celebrate(createFeedbackSchema), createFeedback);
+
+router.get('/tools/:toolId', getFeedbacksByToolId);
+
 
 export default router;
